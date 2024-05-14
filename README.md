@@ -47,6 +47,7 @@ Online Chess is a real-time multiplayer chess game built with Node.js and React,
    # Install backend dependencies
    cd ../backend
    npm install
+   tsc -b
    ```
 
 ## Usage
