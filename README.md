@@ -1,6 +1,4 @@
-Sure, here's a basic structure for your README file:
-
----
+ 
 
 # Online Chess
 
