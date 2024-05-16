@@ -48,6 +48,7 @@ export class ChessFrontend extends ChessGame {
             this.board[x][y].highlight = true
         }
         if (check && this.isMate(opposition)) this.updateResult(piececolor)
+        this.updateCastlingRights(piececolor)
         return
     } 
      
@@ -74,7 +75,7 @@ export class ChessFrontend extends ChessGame {
         if (this.color && this.color !== this.turn) return
         let piece = cell.piece as Piece
         let [x, y] = parseNotation(cell.square)
-        let moves: ChessSquare[] = chessPiecesMoves[piece.name](cell.square, piece.color, board)
+        let moves: ChessSquare[] = this.getPieceMoves(cell.square, piece , board)
         moves = moves.filter((notation) => {
             let [i, j] = parseNotation(notation)
             let tmp = this.copyBoard() as CellType[][]

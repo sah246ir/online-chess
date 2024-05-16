@@ -1,5 +1,5 @@
 import { parseNotation } from "./utils";
-import { CellTypeMinimal, ChessSquare, Piece, PieceColor, chessPieces, piecePoints, Moves, TypeofBoard, CellType, fenChessPieces, Board, fenChessCode } from "./chessTypes";
+import { CellTypeMinimal, ChessSquare, Piece, PieceColor,piecePoints, Moves, TypeofBoard,fenChessPieces,Board,fenChessCode,canCastleType } from "./chessTypes";
 import { chessPiecesMoves } from "./piecemoves";
 var Pieces = "RNBQKBNR";
 var colors: PieceColor[] = ["white", "black"];
@@ -12,6 +12,7 @@ export class ChessGame {
     captured: Piece[]
     color: PieceColor | null
     winner: PieceColor | "-1" | null
+    cancastle: Record<PieceColor,canCastleType>
     constructor(fenstring?: string) {
         this.board = []
         this.check = ""
@@ -19,16 +20,28 @@ export class ChessGame {
         this.captured = []
         this.color = null
         this.winner = null
+        this.cancastle = {
+            "black":{
+                "long":"c8",
+                "short":"g8"
+            },
+            "white":{
+                "long":"c1",
+                "short":"g1"
+            },
+        }
         this.createBoard(fenstring)  
     }
     protected createBoard(fen: string | undefined) {
         if(!fen) fen = initialboard 
-        const rows = fen.split("/");
+        const [fenboard,turn] = fen.split(" ")
+        const rows = fenboard.split("/");
         const Board: Board = []; 
         for (let row = 0; row < rows.length; row++) {
             const boardRow: CellTypeMinimal[] = this.createBoardRow(rows[row], row);
             Board.push(boardRow);
         } 
+        this.turn = turn==="w"?"white":"black"
         this.board = Board; 
     }
 
@@ -53,6 +66,7 @@ export class ChessGame {
             }
             string+='/'
         }
+        string += this.turn==="black"?" b":" w"
         return string
     }
 
@@ -121,14 +135,47 @@ export class ChessGame {
         let check = this.checkKingThreat(opposition, this.board)
         if (check.length > 0 && this.isMate(opposition)) return this.updateResult(this.turn)
         if (check.length > 0) this.check = check
+        this.updateCastlingRights(piececolor)
+        
         return
+    }
+    updateCastlingRights(color:PieceColor){
+        let leftrook = parseNotation(color==="black"?"a8":"a1")
+        let rightrook = parseNotation(color==="black"?"h8":"h1")
+        let king = parseNotation(color==="black"?"e8":"e1")
+        let leftrookel = this.board[ leftrook[0] ][ leftrook[1]]
+        let rightrookel = this.board[ rightrook[0] ][ rightrook[1]]
+        let kingel = this.board[ king[0] ][ king[1]]
+
+        if(!kingel.piece){
+            this.cancastle[color].long = ""
+            this.cancastle[color].short = ""
+        }else if(!leftrookel.piece){
+            this.cancastle[color].long = "" 
+        }else if(!rightrookel.piece){
+            this.cancastle[color].short = "" 
+        }
+    }
+
+    getPieceMoves(from:ChessSquare,piece:Piece,board:TypeofBoard): Moves{ 
+        let moves: Moves = chessPiecesMoves[piece.name](from, piece.color, board) 
+        if(piece.name === "king"){
+            let leftrook:ChessSquare = piece.color==="black"?"b8":"b1" 
+            let rightrook:ChessSquare = piece.color==="black"?"g8":"g1"
+            let kingasrook:Moves = chessPiecesMoves["rook"](from, piece.color, board) 
+            let longcoord =  this.cancastle[piece.color].long
+            let shortcoord =  this.cancastle[piece.color].short
+            if(longcoord && kingasrook.includes(leftrook)) moves.push(longcoord)
+            if(shortcoord && kingasrook.includes(rightrook)) moves.push(shortcoord)
+        }
+        return moves
     }
     validateMove(from: ChessSquare, to: ChessSquare): boolean {
         let [x, y] = parseNotation(from)
         let [i, j] = parseNotation(to)
         let piece = this.board[x][y].piece as Piece
         if (piece.color !== this.turn) throw new Error("UH OH! It's not your turn");
-        let psbl_movies: Moves = chessPiecesMoves[piece.name](from, piece.color, this.board)
+        let psbl_movies: Moves = this.getPieceMoves(from, piece , this.board)
         if (psbl_movies.indexOf(to) === -1) throw new Error(`${piece.name} cannot make this move`);
 
         let testboard = this.copyBoard()
@@ -147,8 +194,23 @@ export class ChessGame {
         if (capture) {
             this.captured.push(capture)
         }
+
         this.board[i][j].piece = piece
         this.board[x][y].piece = null
+        if( piece.name==="king" && to===this.cancastle[piece.color].long ){
+            let[lri,lrj] = parseNotation(piece.color==="black"?"a8":"a1")
+            this.board[i][j+1].piece = this.board[lri][lrj].piece
+            this.board[lri][lrj].piece = null
+            this.cancastle[piece.color].short = ""
+            this.cancastle[piece.color].long = ""
+        }
+        else if( piece.name==="king" && to===this.cancastle[piece.color].short ){
+            let[sri,srj] = parseNotation(piece.color==="black"?"h8":"h1")
+            this.board[i][j-1].piece = this.board[sri][srj].piece
+            this.board[sri][srj].piece = null 
+            this.cancastle[piece.color].short = ""
+            this.cancastle[piece.color].long = ""
+        }
         this.postMoveTasks(piece.color)
         this.toggleMove()
         console.log(this.parseBoard())
@@ -164,7 +226,7 @@ export class ChessGame {
         for (let threat of threatees) {
             let [i, j] = parseNotation(threat)
             let piece = board[i][j].piece as Piece
-            let moves: ChessSquare[] = chessPiecesMoves[piece.name](threat, piece.color, board)
+            let moves: Moves = this.getPieceMoves(threat, piece , board)
             for (let move of moves) {
                 let [x, y] = parseNotation(move);
                 let pc = board[x][y].piece
@@ -182,7 +244,7 @@ export class ChessGame {
             let [x, y] = parseNotation(pos)
             let pc = this.board[x][y].piece
             if (!pc) continue
-            let moves: ChessSquare[] = chessPiecesMoves[pc.name](this.board[x][y].square, pc.color, this.board);
+            let moves: ChessSquare[] = this.getPieceMoves(this.board[x][y].square, pc , this.board);
             for (let notation of moves) {
                 let [i, j] = parseNotation(notation)
                 let tmp = this.copyBoard()

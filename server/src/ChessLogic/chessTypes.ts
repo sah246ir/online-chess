@@ -1,10 +1,15 @@
 // piecemoves.d.ts
 
+export type castlingType = "long"|"short"
 export type TypeofBoard = CellTypeMinimal[][] | CellType[][]
 export type FrontendBoard = CellType[][]
 export type Board = CellTypeMinimal[][] 
 export type PieceType = 'rook' | 'knight' | 'bishop' | 'queen' | 'king' | 'pawn';
 
+export interface canCastleType{
+    long:ChessSquare | "",
+    short:ChessSquare | ""
+}
 export type ChessSquare = "a1" | "a2" | "a3" | "a4" | "a5" | "a6" | "a7" | "a8" |
     "b1" | "b2" | "b3" | "b4" | "b5" | "b6" | "b7" | "b8" |
     "c1" | "c2" | "c3" | "c4" | "c5" | "c6" | "c7" | "c8" |
@@ -68,7 +73,7 @@ export const piecePoints: Record<PieceType, number> = {
     'king': 0,
     'pawn': 1
 }; 
-export type Moves = ChessSquare[] 
+export type Moves = (ChessSquare)[] 
 
 export type PieceColor = "white" | "black"
 
