@@ -37,14 +37,16 @@ export class gameManager {
             this.games[idx].black = ws;
             this.games[idx].black?.send(JSON.stringify({
                 type: "MOVE",
-                board: this.games[idx].board.parseBoard()
+                board: this.games[idx].board.parseBoard(),
+                captures:this.games[idx].board.captured
             }))
         } else if (!this.games[idx].white) {
             this.games[idx].white = ws;
             this.games[idx].white?.send(JSON.stringify({
                 type: "MOVE",
-                board: this.games[idx].board.parseBoard()
-            }))
+                board: this.games[idx].board.parseBoard(),
+                captures:this.games[idx].board.captured
+        }))
         }
         this.games[idx].black?.send(JSON.stringify({
             type: "START",
@@ -82,7 +84,8 @@ export class gameManager {
         game.board.makeMove(data.from as ChessSquare, data.to as ChessSquare)
         let move = {
             type: "MOVE",
-            board: game.board.parseBoard()
+            board: game.board.parseBoard(),
+            captures:game.board.captured
         }
         if (game) {
             if (game.moves.length % 2 == 0) {

@@ -15,7 +15,7 @@ const OnlineGame = () => {
   // const [Chess] = useState(new ChessGame())
   const [Chess] = useState(new ChessFrontend())
   const [Board, setBoard] = useState<FrontendBoard>(Chess.board)
-  const [dialog, setdialog] = useState<boolean>(false)
+  const [dialog, setdialog] = useState<boolean>(true)
   const [drawoffer, Setdrawoffer] = useState<"black" | "white" | null>(null)
   useEffect(() => {
     if (!Socket) return
@@ -30,13 +30,14 @@ const OnlineGame = () => {
       let data = JSON.parse(message.data);
       switch (data.type) {
         case "START":
-          setdialog(prev => !prev)
+          setdialog(false)
           Chess.color = data.color
           break
         case "MOVE":
           console.log(data)
           // Chess.makeMove(data.from, data.to)
           Chess.createBoard(data.board)
+          Chess.captured = data.captures
           setBoard([...Chess.board])
           break
         case "DRAW":
@@ -61,10 +62,10 @@ const OnlineGame = () => {
 
   return (
     <div>
-      {/* {dialog
+      {dialog
         ?
         <GameLinkDialog id={params.id}></GameLinkDialog>
-        : null} */}
+        : null}
       <gameContext.Provider value={{ Chess, setBoard, Board, Socket }}>
         {Chess.winner !== null ?
           <GameOverDialog winner={Chess.winner} player={Chess.color}></GameOverDialog>
