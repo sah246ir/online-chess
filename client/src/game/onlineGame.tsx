@@ -5,10 +5,8 @@ import { useSocket } from '../hooks/useSocket'
 import GameLinkDialog from '../dialog/GameLinkDialog'
 import { useParams } from 'react-router-dom'
 import OfferDrawDialog from '../dialog/OfferDrawDialog'
-import GameOverDialog from '../dialog/GameOverDialog'
-import { ChessFrontend } from '../utils/ChessLogic/Chess-frontend'
-import { FrontendBoard } from '../utils/ChessLogic/chessTypes'
-
+import GameOverDialog from '../dialog/GameOverDialog' 
+import { ChessFrontend,FrontendBoard } from 'chess-kit'
 const OnlineGame = () => {
   const Socket = useSocket()
   const params = useParams()

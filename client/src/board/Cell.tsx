@@ -2,7 +2,7 @@ import React, { useContext } from 'react';
 import Piece from './Piece';
 import { gameContext } from '../context/GameContext';
 import { useParams } from 'react-router-dom';
-import { CellType } from '../utils/ChessLogic/chessTypes';
+import { CellType } from 'chess-kit';
 const cellColor = {
   black: 'cell-black',
   white: 'cell-white',

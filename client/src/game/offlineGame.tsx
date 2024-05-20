@@ -1,9 +1,8 @@
 import React, { useState } from 'react' 
 import { gameContext } from '../context/GameContext'
 import { ChessBoard } from '../board/ChessBoard'
-import GameOverDialog from '../dialog/GameOverDialog'
-import { ChessFrontend } from '../utils/ChessLogic/Chess-frontend'
-import { FrontendBoard } from '../utils/ChessLogic/chessTypes'
+import GameOverDialog from '../dialog/GameOverDialog' 
+import { ChessFrontend,FrontendBoard } from 'chess-kit'
 const OfflineGame = () => {
   const [Chess] = useState(new ChessFrontend( )) 
   const [Board, setBoard] = useState<FrontendBoard>(Chess.board)

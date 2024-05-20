@@ -1,6 +1,6 @@
 import React from 'react' 
 import Cell from './Cell' 
-import { CellType, FrontendBoard } from '../utils/ChessLogic/chessTypes';
+import { CellType, FrontendBoard } from 'chess-kit';
 interface PropTypes {
   row: FrontendBoard[0];
   i:number

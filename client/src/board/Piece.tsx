@@ -1,4 +1,4 @@
-import { PieceType } from "../utils/ChessLogic/chessTypes";
+import { PieceType } from "chess-kit";
 
  
  

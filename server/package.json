@@ -11,6 +11,7 @@
   "license": "ISC",
   "dependencies": {
     "@types/ws": "^8.5.10",
+    "chess-kit": "^1.3.0",
     "ws": "^8.17.0"
   }
 }

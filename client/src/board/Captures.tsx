@@ -1,5 +1,5 @@
 import React from 'react'  
-import { CapturesType, Piece } from '../utils/ChessLogic/chessTypes'
+import { CapturesType, Piece } from 'chess-kit'
 interface PropTypes {
   captures: CapturesType,
   rotate:boolean

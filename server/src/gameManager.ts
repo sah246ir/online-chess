@@ -1,9 +1,9 @@
 import { Init, Move, Draw, Resign } from "./index";
 import { WebSocket } from 'ws';
-import { ChessGame } from "./ChessLogic/Chess";
-import { ChessSquare } from "./ChessLogic/chessTypes";
+import { Chess } from "chess-kit";
+import { ChessSquare } from "chess-kit";
 interface Game {
-    board: ChessGame
+    board: Chess
     white: WebSocket | null;
     black: WebSocket | null;
     moves: string[];
@@ -23,7 +23,7 @@ export class gameManager {
             return this.joinGame(gameIndex, ws)
         }
         let game = {
-            board: new ChessGame(),
+            board: new Chess(),
             moves: [],
             gameid: data.code,
             white: data.color === "white" ? ws : null,
@@ -37,14 +37,14 @@ export class gameManager {
             this.games[idx].black = ws;
             this.games[idx].black?.send(JSON.stringify({
                 type: "MOVE",
-                board: this.games[idx].board.parseBoard(),
+                board: this.games[idx].board.encodeBoard(),
                 captures:this.games[idx].board.captured
             }))
         } else if (!this.games[idx].white) {
             this.games[idx].white = ws;
             this.games[idx].white?.send(JSON.stringify({
                 type: "MOVE",
-                board: this.games[idx].board.parseBoard(),
+                board: this.games[idx].board.encodeBoard(),
                 captures:this.games[idx].board.captured
         }))
         }
@@ -84,7 +84,7 @@ export class gameManager {
         game.board.makeMove(data.from as ChessSquare, data.to as ChessSquare)
         let move = {
             type: "MOVE",
-            board: game.board.parseBoard(),
+            board: game.board.encodeBoard(),
             captures:game.board.captured
         }
         if (game) {

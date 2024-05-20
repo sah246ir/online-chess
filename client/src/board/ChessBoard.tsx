@@ -3,7 +3,7 @@ import BoardRow from './BoardRow'
 import { gameContext } from '../context/GameContext'
 import Captures from './Captures' 
 import { useParams,Navigate } from 'react-router-dom'
-import { FrontendBoard } from '../utils/ChessLogic/chessTypes'
+import { FrontendBoard } from 'chess-kit'
 
 interface propTypes{
   online:boolean

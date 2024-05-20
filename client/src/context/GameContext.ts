@@ -1,6 +1,8 @@
 import React from "react"; 
-import { ChessFrontend } from "../utils/ChessLogic/Chess-frontend";
-import { CellType } from "../utils/ChessLogic/chessTypes";
+// import { ChessFrontend } from "../utils/ChessLogic/Chess-frontend";
+// import { CellType } from "../utils/ChessLogic/chessTypes";
+
+import { ChessFrontend,CellType } from "chess-kit";
 interface gameContextType{
     // Chess:ChessGame ,
     Chess:ChessFrontend ,
