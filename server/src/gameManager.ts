@@ -5,9 +5,12 @@ import { ChessSquare } from "chess-kit";
 interface Game {
     board: Chess
     white: WebSocket | null;
-    black: WebSocket | null;
-    moves: string[];
+    black: WebSocket | null; 
     gameid: String;
+    moves: {
+        from:ChessSquare,
+        to:ChessSquare
+    }[]
 }
 export class gameManager {
     private games: Game[]
@@ -34,27 +37,23 @@ export class gameManager {
 
     private joinGame(idx: number, ws: WebSocket) {
         if (!this.games[idx].black) {
-            this.games[idx].black = ws;
-            this.games[idx].black?.send(JSON.stringify({
-                type: "MOVE",
-                board: this.games[idx].board.encodeBoard(),
-                captures:this.games[idx].board.captured
-            }))
+            this.games[idx].black = ws; 
         } else if (!this.games[idx].white) {
-            this.games[idx].white = ws;
-            this.games[idx].white?.send(JSON.stringify({
-                type: "MOVE",
-                board: this.games[idx].board.encodeBoard(),
-                captures:this.games[idx].board.captured
-        }))
+            this.games[idx].white = ws; 
         }
         this.games[idx].black?.send(JSON.stringify({
             type: "START",
-            color: "black"
+            color: "black",
+            board: this.games[idx].board.encodeBoard(),
+            captures:this.games[idx].board.captured,
+            moves:this.games[idx].moves
         }))
         this.games[idx].white?.send(JSON.stringify({
             type: "START",
-            color: "white"
+            color: "white",
+            board: this.games[idx].board.encodeBoard(),
+            captures:this.games[idx].board.captured,
+            moves:this.games[idx].moves
         }))
         return
     }
@@ -79,21 +78,27 @@ export class gameManager {
             return el.gameid === data.code;
         });
         if (gameIndex === -1) return
-        let game = this.games[gameIndex]
-        console.log(data)
-        game.board.makeMove(data.from as ChessSquare, data.to as ChessSquare)
+        let game = this.games[gameIndex] 
+        let movemade = game.board.makeMove(data.from as ChessSquare, data.to as ChessSquare)
         let move = {
             type: "MOVE",
             board: game.board.encodeBoard(),
-            captures:game.board.captured
+            captures:game.board.captured,
+            move:{
+                from:data.from,
+                to:data.to,
+            }
         }
-        if (game) {
-            if (game.moves.length % 2 == 0) {
+        if (game && movemade) {
+            if (game.board.turn === "black") {
                 game.black?.send(JSON.stringify(move))
             } else {
                 game.white?.send(JSON.stringify(move))
-            }
-            game.moves.push(data.from + " " + data.to)
+            } 
+            this.games[gameIndex].moves.push({
+                from:data.from ,
+                to:data.to 
+            })
         }
     }
 

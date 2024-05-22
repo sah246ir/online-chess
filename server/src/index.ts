@@ -1,13 +1,14 @@
 import { WebSocket } from 'ws';
 import { gameManager } from './gameManager';
+import { ChessSquare } from 'chess-kit';
 
 const wss = new WebSocket.Server({ port: 8080 });
 console.log("websocket listening on ws:/localhost:8080");
 
 export interface Move {
   code: string;
-  from: string;
-  to: string;
+  from: ChessSquare;
+  to: ChessSquare;
 }
 
 export interface Init {
