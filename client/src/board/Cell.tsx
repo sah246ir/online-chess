@@ -3,6 +3,7 @@ import Piece from './Piece';
 import { gameContext } from '../context/GameContext';
 import { useParams } from 'react-router-dom';
 import { CellType } from 'chess-kit';
+import { MovesMade } from '../types';
 const cellColor = {
   black: 'cell-black',
   white: 'cell-white',
@@ -29,36 +30,16 @@ export default function Cell({ cell, i, j }: PropTypes) {
       return cellColor[cell.cell_color]
     }
   }
-  function cellClick() {
-    if (cell.piece && cell.highlight && cell.piece.color !== board.Chess.turn) {
-      handleCapture();
-    }
-    else if (cell.piece && cell.piece.color !== board.Chess.turn) {
+  function cellClick() { 
+    if (cell.piece && cell.piece.color !== board.Chess.turn && !cell.highlight) {
       return
     }
-    else if (cell.piece) {
+    else if (cell.piece && cell.piece.color === board.Chess.turn) {
       handlePieceSelection();
     } else if (!cell.piece && !cell.highlight) {
       handleEmptyClick();
     } else {
       handleMovement();
-    }
-  } 
-  function handleCapture() {
-    if(!cell.piece || !board.Chess.selected) return 
-    let from = board.Chess.selected 
-    let moved = board.Chess.makeMove(board.Chess.selected,cell.square);
-    board.setBoard([...board.Chess.board]);
-    if(board.Socket && moved){ 
-      board.Socket.send(JSON.stringify({
-        type:"MOVE",
-        content:{
-          code:params.id,
-          from:from,
-          to:cell.square, 
-        }
-        
-      }))
     }
   }  
   function handlePieceSelection() {
@@ -78,7 +59,13 @@ export default function Cell({ cell, i, j }: PropTypes) {
     if(!board.Chess.selected) return
     let from = board.Chess.selected
     let moved = board.Chess.makeMove(board.Chess.selected,cell.square);
-    board.setBoard([...board.Chess.board]); 
+    if(moved){
+      board.setMoves((moves:MovesMade[])=>[...moves,{
+        from,
+        to:cell.square
+      }])
+      board.setBoard([...board.Chess.board]); 
+    }
     if(board.Socket && moved){ 
       board.Socket.send(JSON.stringify({
         type:"MOVE",

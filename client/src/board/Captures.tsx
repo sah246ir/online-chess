@@ -8,10 +8,10 @@ const Captures = ({ captures,rotate }: PropTypes) => {
   return (
     <div className={`flex w-full min-h-8 ${rotate?'justify-end':''}`}>
       <div className="flex captures items-center" >
-        {captures.captures.map((pc: Piece) => {
+        {captures.captures.map((pc: Piece,i) => {
           let img = require(`../pieces/${pc.color}-${pc.name}.png`)
           return (
-            <p>
+            <p key={i}>
               <img className={`${rotate?'rotate-180':''}`} width="30" src={img} alt={`${pc.color} ${pc.name}`} />
             </p>
           )

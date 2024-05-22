@@ -6,13 +6,15 @@ import GameLinkDialog from '../dialog/GameLinkDialog'
 import { useParams } from 'react-router-dom'
 import OfferDrawDialog from '../dialog/OfferDrawDialog'
 import GameOverDialog from '../dialog/GameOverDialog' 
-import { ChessFrontend,FrontendBoard } from 'chess-kit'
+import { ChessFrontend,ChessSquare,FrontendBoard } from 'chess-kit'
+import { MovesMade } from '../types'
+ 
 const OnlineGame = () => {
   const Socket = useSocket()
-  const params = useParams()
-  // const [Chess] = useState(new ChessGame())
+  const params = useParams() 
   const [Chess] = useState(new ChessFrontend())
   const [Board, setBoard] = useState<FrontendBoard>(Chess.board)
+  const [Moves,setMoves] = useState<MovesMade[]>([])
   const [dialog, setdialog] = useState<boolean>(true)
   const [drawoffer, Setdrawoffer] = useState<"black" | "white" | null>(null)
   useEffect(() => {
@@ -29,14 +31,20 @@ const OnlineGame = () => {
       switch (data.type) {
         case "START":
           setdialog(false)
+          Chess.createBoard(data.board)
+          setBoard([...Chess.board])
+          setMoves([...data.moves])
           Chess.color = data.color
           break
-        case "MOVE":
-          console.log(data)
-          // Chess.makeMove(data.from, data.to)
+        case "MOVE": 
+          console.log(data,Moves)
           Chess.createBoard(data.board)
           Chess.captured = data.captures
           setBoard([...Chess.board])
+          setMoves(moves => [...moves,{
+            from:data.move.from as ChessSquare,
+            to:data.move.to as ChessSquare,
+          }])
           break
         case "DRAW":
           if (data.content.type === "offer") {
@@ -64,14 +72,14 @@ const OnlineGame = () => {
         ?
         <GameLinkDialog id={params.id}></GameLinkDialog>
         : null}
-      <gameContext.Provider value={{ Chess, setBoard, Board, Socket }}>
+      <gameContext.Provider value={{ Chess, setBoard, Board, Socket, setMoves }}>
         {Chess.winner !== null ?
           <GameOverDialog winner={Chess.winner} player={Chess.color}></GameOverDialog>
           : null}
         {drawoffer ?
           <OfferDrawDialog Setdrawoffer={Setdrawoffer} color={drawoffer}></OfferDrawDialog>
           : null}
-        <ChessBoard online></ChessBoard>
+        <ChessBoard online moves={Moves}></ChessBoard>
       </gameContext.Provider>
     </div>
   )
