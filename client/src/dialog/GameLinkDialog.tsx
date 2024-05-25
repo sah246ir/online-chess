@@ -12,7 +12,7 @@ const GameLinkDialog = ({id}:propTypes) => {
                 <h1 className='text-white text-3xl mb-11'>Invite Player</h1>
                 <div className=" ">
                     <div className='text-nowrap whitespace-nowrap flex items-center bg-gray-600 w-full '>
-                        <p className='text-white p-2 w-full overflow-auto'>https://lichess.org/{id}</p>
+                        <p className='text-white p-2 w-full overflow-auto'>http://chess.stellartech.space/play/online/{id}</p>
                         <i className='text-white fa fa-copy w-11 cursor-pointer'></i>
                     </div>
                     <button className='mt-5 transition duration-500 bg-gray-500 px-4 py-1 hover:bg-gray-600 mb-5 text-gray-100'>
