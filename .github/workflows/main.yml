@@ -1,0 +1,26 @@
+name: online chess deployments
+
+on:
+  push:
+    branches: [ "main" ]
+
+jobs:
+  build:
+    runs-on: self-hosted
+
+    steps:
+      - name: Change directory and reset git
+        run: |
+          cd /home/ubuntu/online-chess
+          if [ -d .git ]; then
+            git reset --hard
+          fi
+      - name: Pull latest changes from git
+        run: cd /home/ubuntu/online-chess && git pull origin main 
+      - name: Re build react frontend and install dependencies
+        run: cd /home/ubuntu/online-chess/client && npm install && npm run build  
+      - name: restart client
+        run: sudo systemctl restart nginx 
+      - name: recompile server and install dependencies and restart pm2
+        run: cd /home/ubuntu/online-chess/server && npm install && tsc -b && pm2 reload index
+       
