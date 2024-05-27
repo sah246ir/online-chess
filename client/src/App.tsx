@@ -11,7 +11,7 @@ function App() {
         <Route path='/home' element={ <Home />}></Route>
         <Route path='/' element={ <Navigate to={"/home"} />}></Route>
         <Route path='/play/offline' element={ <OfflineGame />}></Route>
-        <Route path='/play/online/:id' element={ <OnlineGame />}></Route>
+        <Route path='/:id' element={ <OnlineGame />}></Route>
       </Routes> 
     </div>
   );

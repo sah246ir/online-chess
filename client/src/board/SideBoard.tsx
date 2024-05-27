@@ -5,7 +5,7 @@ interface propTypes{
 }
 export default function SideBoard({children}:propTypes) {
   return (
-    <div className="side-board py-5 mt-7 px-3 bg-gray-900 text-white text-center max-h-[544px] overflow-auto">
+    <div className=" sm:mt-7 side-board py-5 px-3 bg-gray-900 text-white text-center max-h-[434px] md:max-h-[560px] overflow-auto">
       {children}
     </div>
   )

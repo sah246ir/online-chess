@@ -78,7 +78,8 @@ export default function Cell({ cell, i, j }: PropTypes) {
       }))
     }
   } 
-  let size = "w-[4.25em] h-[4.25em]" 
+  let size = "w-[2em] h-[2em] sm:w-[3.31em] sm:h-[3.31em] md:w-[4.31em] md:h-[4.31em]" 
+  
   return (
     <div onClick={cellClick} className={`${size} ${highlightColor()} flex items-center justify-center ${ board.Chess.color==="black"?'rotate-180':''}`}>
  

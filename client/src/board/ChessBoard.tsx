@@ -49,8 +49,8 @@ export const ChessBoard = ({ online, moves }: propTypes) => {
     }
   }
   return (
-    <div className="w-full min-h-screen flex flex-col items-center justify-center ">
-      <div className="flex gap-5 justify-center">
+    <div className="w-full min-h-screen flex flex-col items-center justify-center p-3">
+      <div className="flex flex-wrap gap-5 justify-center">
         <button onClick={restart} className=' transition duration-500 rounded bg-blue-700 px-6 py-2 hover:bg-blue-800 mb-5 text-gray-100'>
           Restart
         </button>
@@ -63,7 +63,7 @@ export const ChessBoard = ({ online, moves }: propTypes) => {
           </button>
           : null}
       </div>
-      <div className="flex gap-5">
+      <div className="flex flex-col sm:flex-row gap-3 flex-wrap justify-center p-3">
         <div className={`board-area ${board.Chess.color === "black" ? 'rotate-180' : ''}`}>
           <div className="flex justify-between">
             <Captures captures={board.Chess.getCaptures("black")} rotate={board.Chess.color === "black" ? true : false}></Captures>
