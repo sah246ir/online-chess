@@ -13,7 +13,7 @@ const GameLinkDialog = ({id}:propTypes) => {
                 <div className=" ">
                     <div className='text-nowrap whitespace-nowrap flex gap-3 items-center bg-gray-600 w-full'>
                         <div className="overflow-auto p-2">
-                            <p className='text-white'>http://chess.stellartech.space/vhn345tre</p> 
+                            <p className='text-white'>{process.env.REACT_APP_HOST_URL || 'http://localhost:3000'}/{id}</p> 
                         </div>
                         <i className='text-white fa fa-copy w-11 cursor-pointer'></i>
                     </div>
