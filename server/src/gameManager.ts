@@ -1,4 +1,4 @@
-import { Init, Move, Draw, Resign } from "./index";
+import { Init, Move, Draw, Resign, Message } from "./index";
 import { WebSocket } from 'ws';
 import { Chess } from "chess-kit";
 import { ChessSquare } from "chess-kit";
@@ -159,6 +159,23 @@ export class gameManager {
         } else {
             game.white?.send(JSON.stringify(senddata))
         }
+    }
+
+    sendMessage(data:Message){
+        let gameIndex: number = this.games.findIndex((el: Game) => {
+            return el.gameid === data.code;
+        });
+        if (gameIndex === -1) return
+        let game = this.games[gameIndex]
+        let senddata = {
+            type:"MESSAGE",
+            content:{
+                from:data.from,
+                message:data.message
+            }
+        }
+        game.white?.send(JSON.stringify(senddata))
+        game.black?.send(JSON.stringify(senddata))
     }
 
 }

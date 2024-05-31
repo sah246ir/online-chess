@@ -9,6 +9,10 @@ import GameOverDialog from '../dialog/GameOverDialog'
 import { ChessFrontend,ChessSquare,FrontendBoard } from 'chess-kit'
 import { MovesMade } from '../types'
  
+interface Message{
+  label:string,
+  content:string,
+}
 const OnlineGame = () => {
   const Socket = useSocket()
   const params = useParams() 
@@ -17,6 +21,7 @@ const OnlineGame = () => {
   const [Moves,setMoves] = useState<MovesMade[]>([])
   const [dialog, setdialog] = useState<boolean>(true)
   const [drawoffer, Setdrawoffer] = useState<"black" | "white" | null>(null)
+  const [messages,setMessages] = useState<Message[]>([])
   useEffect(() => {
     if (!Socket) return
     Socket.send(JSON.stringify({
@@ -29,6 +34,13 @@ const OnlineGame = () => {
     Socket.onmessage = (message: MessageEvent<string>) => {
       let data = JSON.parse(message.data);
       switch (data.type) {
+        case "MESSAGE":
+          setMessages(prev=>[...prev,{
+            label:data.content.from===Chess.color?"You":"Player",
+            content:data.content.message 
+          }]) 
+          console.log(messages)
+          break
         case "START":
           setdialog(false)
           Chess.createBoard(data.board)
@@ -72,7 +84,7 @@ const OnlineGame = () => {
         ?
         <GameLinkDialog id={params.id}></GameLinkDialog>
         : null}
-      <gameContext.Provider value={{ Chess, setBoard, Board, Socket, setMoves }}>
+      <gameContext.Provider value={{ Chess, setBoard, Board, Socket, setMoves, messages }}>
         {Chess.winner !== null ?
           <GameOverDialog winner={Chess.winner} player={Chess.color}></GameOverDialog>
           : null}

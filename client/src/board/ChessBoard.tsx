@@ -51,48 +51,47 @@ export const ChessBoard = ({ online, moves }: propTypes) => {
   return (
     <div className="w-full min-h-screen flex flex-col items-center justify-center p-3">
       <div className="flex flex-wrap gap-5 justify-center">
-        <button onClick={restart} className=' transition duration-500 rounded bg-blue-700 px-6 py-2 hover:bg-blue-800 mb-5 text-gray-100'>
+        <button onClick={restart} className=' transition duration-500 rounded bg-blue-700 px-6 py-2 hover:bg-blue-800 text-gray-100'>
           Restart
         </button>
-        <button onClick={resign} className=' transition duration-500 rounded bg-red-700 px-6 py-2 hover:bg-red-800 mb-5 text-gray-100'>
+        <button onClick={resign} className=' transition duration-500 rounded bg-red-700 px-6 py-2 hover:bg-red-800 text-gray-100'>
           Resign
         </button>
         {online ?
-          <button onClick={offerdraw} className=' transition duration-500 rounded bg-gray-600 px-6 py-2 hover:bg-gray-700 mb-5 text-gray-100'>
+          <button onClick={offerdraw} className=' transition duration-500 rounded bg-gray-600 px-6 py-2 hover:bg-gray-700 text-gray-100'>
             Offer Draw
           </button>
           : null}
-      </div>
-      <div className="flex flex-col sm:flex-row gap-3 flex-wrap justify-center p-3">
-        <div className={`board-area ${board.Chess.color === "black" ? 'rotate-180' : ''}`}>
-          <div className="flex justify-between">
-            <Captures captures={board.Chess.getCaptures("black")} rotate={board.Chess.color === "black" ? true : false}></Captures>
-            {board.Chess.color === "white" && board.Chess.turn === "black" ?
-              <p className='w-full text-right text-white'>waiting for black to move &nbsp;
-                <i className="fa fa-spin fa-hourglass"></i>
-              </p>
-              : null}
-          </div>
-          <div className={`board flex flex-col `}>
-            {board.Board.map((row: FrontendBoard[0], i: number) => {
-              return (
-                <BoardRow key={i} row={row} i={i} />
-              )
-            })}
-          </div>
-          <div className="flex justify-between mt-1">
-            <Captures captures={board.Chess.getCaptures("white")} rotate={board.Chess.color === "black" ? true : false}></Captures>
-            {board.Chess.color === "black" && board.Chess.turn === "white" ?
-              <p className={`${board.Chess.color === "black" ? "rotate-180 text-left" : "text-right"}   w-full text-white`}>waiting for white to move &nbsp;
-                <i className="fa fa-spin fa-hourglass"></i>
-              </p> : null}
-          </div>
-        </div>
-        <SideBoard>
-          <NotationTable moves={moves} />
-        </SideBoard>
-
-      </div>
+      </div> 
+        <div className={`board-area mt-6`}>
+          <div className="flex flex-col lg:flex-row">
+            <div className={`${board.Chess.color === "black" ? 'rotate-180' : ''}`}>
+              <div className="flex justify-between items-baseline mb-1">
+                <Captures captures={board.Chess.getCaptures("black")} rotate={board.Chess.color === "black" ? true : false}></Captures>
+                {board.Chess.color === "white" && board.Chess.turn === "black" ?
+                  <p className='w-full text-right text-white text-xs'>waiting for black to move &nbsp;
+                    <i className="fa fa-spin fa-hourglass"></i>
+                  </p>
+                  : null}
+              </div>
+              <div className={`board flex flex-col `}>
+                {board.Board.map((row: FrontendBoard[0], i: number) => {
+                  return (
+                    <BoardRow key={i} row={row} i={i} />
+                  )
+                })}
+              </div>
+              <div className="flex justify-between items-baseline mt-1">
+                <Captures captures={board.Chess.getCaptures("white")} rotate={board.Chess.color === "black" ? true : false}></Captures>
+                {board.Chess.color === "black" && board.Chess.turn === "white" ?
+                  <p className={`${board.Chess.color === "black" ? "rotate-180 text-left" : "text-right"}   w-full text-white text-xs`}>waiting for white to move &nbsp;
+                    <i className="fa fa-spin fa-hourglass"></i>
+                  </p> : null}
+              </div>
+            </div>
+            <SideBoard online={online} moves={moves} />
+          </div> 
+        </div> 
     </div>
   )
 }

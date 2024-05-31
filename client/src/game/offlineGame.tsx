@@ -15,7 +15,7 @@ const OfflineGame = () => {
       {Chess.winner?
       <GameOverDialog winner={Chess.winner} player={null}></GameOverDialog> 
       :null} 
-      <gameContext.Provider value={{ Chess, setBoard, Board,Socket:null,setMoves }}> 
+      <gameContext.Provider value={{ Chess, setBoard, Board,Socket:null,setMoves,messages:null }}> 
         <ChessBoard online={false} moves={Moves}></ChessBoard>
       </gameContext.Provider>
     </div>

@@ -3,13 +3,19 @@ import React from "react";
 // import { CellType } from "../utils/ChessLogic/chessTypes";
 
 import { ChessFrontend,CellType } from "chess-kit";
+
+interface Message{
+    label:string,
+    content:string
+}
 interface gameContextType{
     // Chess:ChessGame ,
     Chess:ChessFrontend ,
     setBoard:Function,
     setMoves:Function,
     Board:CellType[][],
-    Socket:WebSocket | null
+    Socket:WebSocket | null,
+    messages:Message[] | null,
 }
 export const gameContext = React.createContext<gameContextType>({
     // Chess:new ChessGame(),
@@ -17,5 +23,6 @@ export const gameContext = React.createContext<gameContextType>({
     setBoard:()=>{},
     setMoves:()=>{},
     Board:[],
-    Socket:null  
+    Socket:null  ,
+    messages:null
 });  

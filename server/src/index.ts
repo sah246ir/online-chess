@@ -27,14 +27,19 @@ export interface Draw {
   type:"offer"|"accept"|"decline"
 }
 
+export interface Message{
+  from:"white" | "black",
+  code:string,
+  message:string
+}
 export interface Join {
   code: string;
 }
 
-interface Message {
-  type: 'INIT' | 'JOIN' | 'MOVE' | 'RESIGN' | 'DRAW';
-  content: Init | Move | Resign | Draw;
-}
+interface SocketMessage {
+  type: 'INIT' | 'JOIN' | 'MOVE' | 'RESIGN' | 'DRAW' | 'MESSAGE';
+  content: Init | Move | Resign | Draw | Message;
+} 
 
 const Manager = new gameManager();
 
@@ -42,8 +47,11 @@ wss.on('connection', (ws: WebSocket) => {
   console.log('New client connected');
 
   ws.on('message', (message) => {
-    let data = JSON.parse(message.toString()) as Message;
+    let data = JSON.parse(message.toString()) as SocketMessage;
     switch (data.type) {
+      case 'MESSAGE':
+        Manager.sendMessage(data.content as Message)
+        break
       case 'INIT':
         Manager.initializeGame(data.content as Init, ws);
         break 
